@@ -8,7 +8,7 @@ class Database
     // Check if the connection is already established
     private function connect()
     {
-        $string = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME;
+        $string = DB_TYPE . ":host=" . DB_HOST . ";dbname=" . DB_NAME;
         if (!$con = new PDO($string, DB_USER, DB_PASS)) {
             die("Failed to connect to database");
         }
@@ -16,7 +16,7 @@ class Database
     }
 
     // Run the query
-    public function run($query, $data = array(), $data_type = "object")
+    public function query($query, $data = array(), $data_type = "object")
     {
         $con = $this->connect();
         $stmt = $con->prepare($query);
@@ -36,5 +36,5 @@ class Database
         return false;
     }
 
-    private function query() {}
+
 }
