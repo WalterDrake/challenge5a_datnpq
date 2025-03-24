@@ -5,8 +5,8 @@
  */
 class Model extends Database
 {
-
-    function __construct()
+    public $error = array();
+    public function __construct()
     {
         // Set the table name
         $this->table = $this->table ?? strtolower(static::class) . 's';
@@ -27,11 +27,26 @@ class Model extends Database
 
     public function insert($data)
     {
+        // remove unwanted columns
+        if(property_exists($this, 'allowedColumns')){
+            foreach($data as $key => $value){
+                if(!in_array($key, $this->allowedColumns)){
+                    unset($data[$key]);
+                }
+            }
+         }
+
+        // run functions before insert
+        if(property_exists($this, 'beforeInsert')){
+           foreach($this->beforeInsert as $func){
+               $data = $this->$func($data);
+           }
+        }
+
         $keys = array_keys($data);
         $columns = implode(',', $keys);
         $values =  implode(',:', $keys);
         $query = "INSERT INTO $this->table ($columns) VALUES (:$values)";
-        echo $query;
         return $this->query($query, $data);
     }
 
