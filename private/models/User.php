@@ -20,7 +20,7 @@ class User extends Model
 
         // check for full name
         if (empty($DATA['fullname']) || !preg_match('/^[a-zA-Z\s]+$/', $DATA['fullname'])) {
-            $this->errors['fullname'] = 'Please enter a full name';
+            $this->errors['fullname'] = 'Please enter a valid full name';
         }
 
         // check for email

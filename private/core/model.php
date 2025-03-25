@@ -11,6 +11,22 @@ class Model extends Database
         // Set the table name
         $this->table = $this->table ?? strtolower(static::class) . 's';
     }
+
+    // return the column name of the primary key
+    protected function get_primary_key($table)
+	{
+
+		$query = "SHOW KEYS from $table WHERE Key_name = 'PRIMARY' ";
+		$db = new Database();
+		$data = $db->query($query);
+
+		if(!empty($data[0]))
+		{
+			return $data[0]->Column_name;
+		}
+		return 'id';
+	}
+
     // Get all records from the table using where clause
     public function where($column, $value)
     {
@@ -68,4 +84,31 @@ class Model extends Database
         $query = "DELETE FROM $this->table WHERE id = :id";
         return $this->query($query, [':id' => $id]);
     }
+
+    // return the first record from the table
+    public function first($column,$value,$orderby = 'desc')
+	{
+
+		$column = addslashes($column);
+		$primary_key = $this->get_primary_key($this->table);
+		$query = "select * from $this->table where $column = :value order by $primary_key $orderby";
+		$data = $this->query($query,[
+			'value'=>$value
+		]);
+		//run functions after select
+		if(is_array($data)){
+			if(property_exists($this, 'afterSelect'))
+			{
+				foreach($this->afterSelect as $func)
+				{
+					$data = $this->$func($data);
+				}
+			}
+		}
+
+		if(is_array($data)){
+			$data = $data[0];
+		}
+		return $data;
+	}
 }

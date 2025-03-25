@@ -8,8 +8,6 @@ class UserAdd extends Controller
         if (count($_POST) > 0) {
             $user = new User();          
             if ($user->validate($_POST)) {  
-                $_POST['avatar'] = 'dinosaur.png';
-                var_dump($_POST);
                 $user->insert($_POST);
             } else {
                 $errors = $user->errors;

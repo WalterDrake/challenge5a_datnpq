@@ -14,8 +14,8 @@
 
   .profile-card img {
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     border: 3px solid #f8c471;
   }
@@ -45,15 +45,11 @@
 </head>
 
 <body>
-  <div class="container">
-    <div class="profile-card">
-      <img id="avatar" src="https://via.placeholder.com/150" alt="User Avatar">
-      <input type="file" id="avatarUpload" class="d-none" accept="image/*">
-      <button class="btn btn-primary mt-2" onclick="document.getElementById('avatarUpload').click();">Change Avatar</button>
-
+  <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card p-4 d-flex flex-row align-items-center shadow-lg" style="max-width: 800px; width: 100%;">
       <!-- Display errors -->
       <?php if (isset($errors) && count($errors) > 0): ?>
-        <div class="alert alert-danger mt-3">
+        <div class="alert alert-danger mt-3 w-100">
           <ul>
             <?php foreach ($errors as $error): ?>
               <li><?= $error ?></li>
@@ -62,45 +58,47 @@
         </div>
       <?php endif; ?>
 
-      <h4 id="username">
-        <h4>
+      <?php if ($row): ?>
+        <?php
+        $image = get_images($row->avatar);
+        ?>
+        <div class="avatar-section pr-4">
+          <img id="avatar" src="<?= $image ?>" alt="User Avatar" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+        </div>
+        <div class="info-section w-100">
+          <div class="form-group">
+            <label>UserName</label>
+            <input type="text" class="form-control" value="<?= esc($row->username) ?>" name='username' disabled>
+          </div>
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" class="form-control" value="<?= get_var('fullname') ?>" name='fullname' disabled>
+            <input type="text" class="form-control" value="<?= esc($row->fullname) ?>" name='fullname' disabled>
           </div>
           <div class="form-group">
             <label>Email</label>
-            <input type="email" class="form-control" id="email" value="<?= get_var('email') ?>"  name='email'>
+            <input type="email" class="form-control" id="email" value="<?= esc($row->email) ?>" name='email' disabled>
           </div>
           <div class="form-group">
             <label>Phone Number</label>
-            <input type="tel" class="form-control" id="phone" value="<?= get_var('numbers') ?>" name='numbers'>
+            <input type="tel" class="form-control" id="phone" value="<?= esc($row->numbers) ?>" name='numbers' disabled>
           </div>
           <div class="form-group">
             <label>Role</label>
-            <input type="text" class="form-control" value="<?= get_var('role') ?>" name='role' disabled>
+            <input type="text" class="form-control" value="<?= esc($row->role) ?>" name='role' disabled>
           </div>
           <div class="form-group">
             <label>Password</label>
-            <input type="password" class="form-control" name='password1'>
+            <input type="password" class="form-control" name='password' disabled>
           </div>
-          <div class="form-group">
-            <label>RePassword</label>
-            <input type="password" class="form-control" name='password2'>
-          </div>
-          <button class="btn btn-success btn-block">Save Changes</button>
+          <?php if (Auth::access('Administrator') || Auth::access('Teacher') || Auth::i_own_content($row)): ?>
+            <a class="btn btn-info btn-sm d-flex align-items-center" href="<?= ROOT ?>/profile/edit/<?= $row->user_id ?>">
+              <span>Edit Profile</span>
+            </a>
+          <?php endif; ?>
+        </div>
+      <?php else: ?>
+        <h4>Profile not found</h4>
+      <?php endif; ?>
     </div>
   </div>
-  <script>
-    document.getElementById('avatarUpload').addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('avatar').src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-      }
-    });
-  </script>
   <?php $this->view('includes/footer'); ?>

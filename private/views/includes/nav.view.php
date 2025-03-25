@@ -17,23 +17,24 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="home">My Website</a>
+      <a class="navbar-brand" href="<?=ROOT?>/home">Welcome <?=ucfirst(Auth::user())?> </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="home"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a class="nav-link" href="<?=ROOT?>/home"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="profile"><i class="fas fa-user"></i> Profile</a>
+            
+            <a class="nav-link" href="<?=ROOT?>/profile/<?=Auth::getUser_id()?>/"><i class="fas fa-user"></i> Profile</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="fas fa-book"></i> Assignment</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a class="nav-link" href="<?=ROOT?>/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </li>
         </ul>
       </div>
