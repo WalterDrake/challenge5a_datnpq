@@ -57,7 +57,7 @@
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <a class="btn btn-warning btn-sm btn-action" href="<?= ROOT ?>/edit_user/<?= $row->user_id ?>" title="Edit User">
+                                    <a class="btn btn-warning btn-sm btn-action" href="<?= ROOT ?>/profile/edit/<?= $row->user_id ?>" title="Edit User">
                                         <i class="fas fa-edit"></i>
                                     </a>
 

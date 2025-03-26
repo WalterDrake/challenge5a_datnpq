@@ -63,7 +63,7 @@
         $image = get_images($row->avatar);
         ?>
         <div class="avatar-section pr-4">
-          <img id="avatar" src="<?= $image ?>" alt="User Avatar" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+          <img id="avatar" src="<?= esc($image) ?>" alt="User Avatar" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
         </div>
         <div class="info-section w-100">
           <div class="form-group">
