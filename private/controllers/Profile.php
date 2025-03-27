@@ -29,13 +29,11 @@ class Profile extends Controller
         $user = new User();
         $id = trim($id) == '' ? Auth::getUser_id() : $id;
 
-        if (count($_FILES) > 0)
-        {
-             // upload image
-             if($myimage = upload_image($_FILES, $id))
-             {
-                 $_POST['avatar'] = basename($myimage);
-             }
+        if (count($_FILES) > 0) {
+            // upload image
+            if ($myimage = upload_image($_FILES, $id)) {
+                $_POST['avatar'] = basename($myimage);
+            }
         }
 
         if (count($_POST) > 0) {
@@ -48,7 +46,6 @@ class Profile extends Controller
                 }
                 $redirect = 'profile/edit/' . $id;
                 $this->redirect($redirect);
-
             } else {
                 $errors = $user->errors;
             }
@@ -59,7 +56,28 @@ class Profile extends Controller
         $data['errors'] = $errors;
 
         if (Auth::access('Administrator') || Auth::access('Teacher') || Auth::i_own_content($row)) {
-            $this->view('profile-edit', $data);
+            $this->view('profile.edit', $data);
+        } else {
+            $this->view('access-denied');
+        }
+    }
+
+    // function edit
+    function delete($id = '')
+    {
+        if (!Auth::logged_in()) {
+            $this->redirect('login');
+        }
+        $user = new User();
+        $id = trim($id) == '' ? Auth::getUser_id() : $id;
+
+        if (count($_POST) > 0 && Auth::access('Administrator') || Auth::access('Teacher')) 
+        {
+            $myrow = $user->first('user_id', $id);
+            if (is_object($myrow)) {
+                $user->delete($myrow->id);
+            }
+            $this->redirect('home');
         } else {
             $this->view('access-denied');
         }

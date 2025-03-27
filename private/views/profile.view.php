@@ -20,48 +20,34 @@
     border: 3px solid #f8c471;
   }
 
-  .profile-card h4 {
-    margin-top: 10px;
-    font-weight: bold;
+  .chatbox {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: white;
   }
 
-  .profile-card .form-control {
-    border-radius: 5px;
-  }
-
-  .profile-card button {
-    background-color: #f8c471;
-    border: none;
-    color: white;
+  .chat-messages {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
     padding: 10px;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    transition: 0.3s;
-  }
-
-  .profile-card button:hover {
-    background-color: #e67e22;
+    background: #f9f9f9;
   }
 </style>
 </head>
 
 <body>
-  <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div class="container d-flex justify-content-center align-items-center" style="height: 100vh; flex-direction: column;">
     <div class="card p-4 d-flex flex-row align-items-center shadow-lg" style="max-width: 800px; width: 100%;">
-      <!-- Display errors -->
-      <?php if (isset($errors) && count($errors) > 0): ?>
-        <div class="alert alert-danger mt-3 w-100">
-          <ul>
-            <?php foreach ($errors as $error): ?>
-              <li><?= $error ?></li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-      <?php endif; ?>
-
       <?php if ($row): ?>
-        <?php
-        $image = get_images($row->avatar);
-        ?>
+        <?php $image = get_images($row->avatar); ?>
         <div class="avatar-section pr-4">
           <img id="avatar" src="<?= esc($image) ?>" alt="User Avatar" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
         </div>
@@ -100,5 +86,49 @@
         <h4>Profile not found</h4>
       <?php endif; ?>
     </div>
+
+    <!-- Chatbox Section -->
+    <?php if (!Auth::i_own_content($row)): ?>
+      <div class="chatbox">
+        <h5>Chat with <?= esc($row->fullname) ?></h5>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="input-group">
+          <input type="text" class="form-control" id="chatInput" placeholder="Type a message...">
+          <div class="input-group-append">
+            <button class="btn btn-primary" id="sendMessage">Send</button>
+          </div>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
+
+  <script>
+    document.getElementById("sendMessage").addEventListener("click", function() {
+      let input = document.getElementById("chatInput");
+      let message = input.value.trim();
+      if (message !== "") {
+        let chatBox = document.getElementById("chatMessages");
+        let newMessage = document.createElement("div");
+        newMessage.classList.add("alert", "alert-secondary", "mt-2");
+        newMessage.innerHTML = `${message} <button class='btn btn-sm btn-warning edit-message'>Edit</button> <button class='btn btn-sm btn-danger delete-message'>Delete</button>`;
+        chatBox.appendChild(newMessage);
+        input.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    });
+
+    document.getElementById("chatMessages").addEventListener("click", function(event) {
+      if (event.target.classList.contains("delete-message")) {
+        event.target.parentElement.remove();
+      } else if (event.target.classList.contains("edit-message")) {
+        let msgDiv = event.target.parentElement;
+        let text = msgDiv.firstChild.textContent.trim();
+        let newText = prompt("Edit your message:", text);
+        if (newText !== null) {
+          msgDiv.firstChild.textContent = newText + " ";
+        }
+      }
+    });
+  </script>
+
   <?php $this->view('includes/footer'); ?>

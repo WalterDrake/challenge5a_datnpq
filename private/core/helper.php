@@ -51,3 +51,42 @@ function upload_image($FILES, $id = "")
 
 	return false;
 }
+
+function upload_file($FILES, $id = "")
+{
+	if (count($FILES) > 0) {
+
+		// allowed file types
+		$allowed[] = "application/pdf";
+		$allowed[] = "application/msword";
+		$allowed[] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+		$allowed[] = "application/vnd.ms-excel";
+		$allowed[] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+		$allowed[] = "application/vnd.ms-powerpoint";
+		$allowed[] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+		$allowed[] = "text/plain";
+		$allowed[] = "application/zip";
+
+		foreach ($_FILES['assignment_files']['name'] as $key => $name) {
+			if ($_FILES['assignment_files']['error'][$key] == 0 && in_array($_FILES['assignment_files']['type'][$key], $allowed)) {
+
+				if (Auth::getRole() == "Teacher" || Auth::getRole() == "Administrator") {
+					$folder = "assets/uploads/" . $id . "/assignments/";
+				} else {
+					$folder = "assets/uploads/" . $id . "/submits/" . Auth::getUser_id() . "/";
+				}
+
+				if (!file_exists($folder)) {
+					mkdir($folder, 0777, true);
+				}
+
+				$destination = $folder . basename($_FILES['assignment_files']['name'][$key]);
+				if (move_uploaded_file($_FILES['assignment_files']['tmp_name'][$key], $destination)) {
+					$uploaded_files[] = $destination;
+				}
+			}
+		}
+		return $uploaded_files;
+	}
+	return false;
+}

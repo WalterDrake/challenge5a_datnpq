@@ -31,7 +31,7 @@
             <a class="nav-link" href="<?=ROOT?>/profile/<?=Auth::getUser_id()?>/"><i class="fas fa-user"></i> Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-book"></i> Assignment</a>
+            <a class="nav-link" href="<?=ROOT?>/assignments"><i class="fas fa-book"></i> Assignment</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="<?=ROOT?>/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>

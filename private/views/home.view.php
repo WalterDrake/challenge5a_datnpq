@@ -28,7 +28,9 @@
         <div class="table-container">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3>All Users</h3>
-                <button class="btn btn-primary" onclick="addUser()"><i class="fas fa-user-plus"></i> Add User</button>
+                <a href="<?= ROOT ?>/home/add" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Add User
+                </a>
             </div>
             <table class="table table-striped table-bordered">
                 <thead class="thead-dark">
@@ -61,7 +63,7 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <a class="btn btn-danger btn-sm btn-action" href="<?= ROOT ?>/delete_user/<?= $row->user_id ?>" title="Delete User" onclick="return confirm('Are you sure you want to delete this user?');">
+                                    <a class="btn btn-danger btn-sm btn-action" href="<?= ROOT ?>/profile/delete/<?= $row->user_id ?>" title="Delete User" onclick="return confirm('Are you sure you want to delete this user?');">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>
@@ -77,9 +79,4 @@
         </div>
     </div>
 
-    <script>
-        function addUser() {
-            window.location.href = 'UserAdd';
-        }
-        </script>
     <?php $this->view('includes/footer'); ?>

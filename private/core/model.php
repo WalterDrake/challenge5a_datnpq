@@ -62,6 +62,7 @@ class Model extends Database
         $columns = implode(',', $keys);
         $values =  implode(',:', $keys);
         $query = "INSERT INTO $this->table ($columns) VALUES (:$values)";
+        echo $query;
         return $this->query($query, $data);
     }
 
@@ -113,15 +114,8 @@ class Model extends Database
         $data = $this->query($query, [
             'value' => $value
         ]);
-        //run functions after select
-        if (is_array($data)) {
-            if (property_exists($this, 'afterSelect')) {
-                foreach ($this->afterSelect as $func) {
-                    $data = $this->$func($data);
-                }
-            }
-        }
 
+        // return the first record
         if (is_array($data)) {
             $data = $data[0];
         }

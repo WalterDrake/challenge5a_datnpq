@@ -57,8 +57,9 @@ class Auth
 
 		$logged_in_role = $_SESSION['USER']->role;
 
+        // Define roles
 		$ROLE['Administrator'] 	= ['Administrator','Student','Teacher'];
-
+        $ROLE['Teacher'] 		= ['Teacher','Student'];
 		$ROLE['Student'] 		= ['Student'];
 
 		if(!isset($ROLE[$logged_in_role]))
