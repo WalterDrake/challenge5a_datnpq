@@ -27,8 +27,10 @@
             <a class="nav-link" href="<?=ROOT?>/home"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
           </li>
           <li class="nav-item">
-            
             <a class="nav-link" href="<?=ROOT?>/profile/<?=Auth::getUser_id()?>/"><i class="fas fa-user"></i> Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="<?=ROOT?>/notes"><i class="fas fa-note-sticky" ></i> Note</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="<?=ROOT?>/assignments"><i class="fas fa-book"></i> Assignment</a>

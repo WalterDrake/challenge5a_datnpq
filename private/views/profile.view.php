@@ -90,10 +90,10 @@
     <!-- Chatbox Section -->
     <?php if (!Auth::i_own_content($row)): ?>
       <div class="chatbox">
-        <h5>Chat with <?= esc($row->fullname) ?></h5>
+        <h5>Note for <?= esc($row->fullname) ?></h5>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="input-group">
-          <input type="text" class="form-control" id="chatInput" placeholder="Type a message...">
+          <input type="text" class="form-control" id="chatInput" placeholder="Type a note...">
           <div class="input-group-append">
             <button class="btn btn-primary" id="sendMessage">Send</button>
           </div>
@@ -105,27 +105,27 @@
   <script>
     document.getElementById("sendMessage").addEventListener("click", function() {
       let input = document.getElementById("chatInput");
-      let message = input.value.trim();
-      if (message !== "") {
+      let note = input.value.trim();
+      if (note !== "") {
         let chatBox = document.getElementById("chatMessages");
-        let newMessage = document.createElement("div");
-        newMessage.classList.add("alert", "alert-secondary", "mt-2");
-        newMessage.innerHTML = `${message} <button class='btn btn-sm btn-warning edit-message'>Edit</button> <button class='btn btn-sm btn-danger delete-message'>Delete</button>`;
-        chatBox.appendChild(newMessage);
+        let newNote = document.createElement("div");
+        newNote.classList.add("alert", "alert-secondary", "mt-2");
+        newNote.innerHTML = `${note} <button class='btn btn-sm btn-warning edit-note'>Edit</button> <button class='btn btn-sm btn-danger delete-note'>Delete</button>`;
+        chatBox.appendChild(newNote);
         input.value = "";
         chatBox.scrollTop = chatBox.scrollHeight;
       }
     });
 
     document.getElementById("chatMessages").addEventListener("click", function(event) {
-      if (event.target.classList.contains("delete-message")) {
+      if (event.target.classList.contains("delete-note")) {
         event.target.parentElement.remove();
-      } else if (event.target.classList.contains("edit-message")) {
-        let msgDiv = event.target.parentElement;
-        let text = msgDiv.firstChild.textContent.trim();
-        let newText = prompt("Edit your message:", text);
+      } else if (event.target.classList.contains("edit-note")) {
+        let noteDiv = event.target.parentElement;
+        let text = noteDiv.firstChild.textContent.trim();
+        let newText = prompt("Edit your note:", text);
         if (newText !== null) {
-          msgDiv.firstChild.textContent = newText + " ";
+          noteDiv.firstChild.textContent = newText + " ";
         }
       }
     });

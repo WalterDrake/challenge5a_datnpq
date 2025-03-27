@@ -29,7 +29,7 @@
       <thead>
         <tr>
           <th>Title</th>
-          <th>Uploaded By</th>
+          <th>Created By</th>
           <th>Date</th>
           <th>Actions</th>
         </tr>
@@ -46,15 +46,18 @@
                   <a href="<?= ROOT ?>/assignments/edit/<?= $assignment->assignment_id ?>" class="btn btn-info btn-sm">
                     <i class="fas fa-eye"></i>
                   </a>
-                <?php else: ?>
+                  <a href="<?= ROOT ?>/assignments/delete/<?= $assignment->assignment_id ?>"
+                    class="btn btn-danger btn-sm btn-action"
+                    onclick="return confirm('Are you sure you want to delete this assignment?');">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                <?php endif; ?>
+
+                <?php if (Auth::getRole() == 'Student' || Auth::getRole() == 'Administrator'): ?>
                   <a href="<?= ROOT ?>/assignments/submit/<?= $assignment->assignment_id ?>" class="btn btn-success btn-sm">
                     <i class="fas fa-upload"></i>
                   </a>
                 <?php endif; ?>
-                <a href="<?= ROOT ?>/assignments/delete/<?= $assignment->assignment_id ?>" class="btn btn-danger btn-sm btn-action"
-                  onclick="return confirm('Are you sure you want to delete this assignment?');">
-                  <i class="fas fa-trash"></i>
-                </a>
               </td>
             </tr>
           <?php endforeach; ?>

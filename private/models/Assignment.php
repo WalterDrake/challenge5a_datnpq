@@ -9,6 +9,9 @@ class Assignment extends Model
     protected $beforeInsert = ['make_assignment_id'];
     protected $beforeUpdate = [];
     protected $allowedColumns = ['title', 'location', 'author', 'description', 'date', 'submit'];
+    protected $afterSelect = [
+        'get_user',
+    ];
 
     public function validate($DATA)
     {
@@ -35,4 +38,5 @@ class Assignment extends Model
         $data['assignment_id'] = uniqid();
         return $data;
     }
+
 }

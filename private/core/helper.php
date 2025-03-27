@@ -43,6 +43,15 @@ function upload_image($FILES, $id = "")
 			if (!file_exists($folder)) {
 				mkdir($folder, 0777, true);
 			}
+			else{
+				// remove ole image
+				$files = glob($folder . "*");
+				foreach ($files as $file) {
+					if (is_file($file)) {
+						unlink($file);
+					}
+				}
+			}
 			$destination = $folder . time() . "_" . $FILES['avatar']['name'];
 			move_uploaded_file($FILES['avatar']['tmp_name'], $destination);
 			return $destination;
@@ -67,8 +76,8 @@ function upload_file($FILES, $id = "")
 		$allowed[] = "text/plain";
 		$allowed[] = "application/zip";
 
-		foreach ($_FILES['assignment_files']['name'] as $key => $name) {
-			if ($_FILES['assignment_files']['error'][$key] == 0 && in_array($_FILES['assignment_files']['type'][$key], $allowed)) {
+		foreach ($_FILES['files']['name'] as $key => $name) {
+			if ($_FILES['files']['error'][$key] == 0 && in_array($_FILES['files']['type'][$key], $allowed)) {
 
 				if (Auth::getRole() == "Teacher" || Auth::getRole() == "Administrator") {
 					$folder = "assets/uploads/" . $id . "/assignments/";
@@ -80,8 +89,8 @@ function upload_file($FILES, $id = "")
 					mkdir($folder, 0777, true);
 				}
 
-				$destination = $folder . basename($_FILES['assignment_files']['name'][$key]);
-				if (move_uploaded_file($_FILES['assignment_files']['tmp_name'][$key], $destination)) {
+				$destination = $folder . basename($_FILES['files']['name'][$key]);
+				if (move_uploaded_file($_FILES['files']['tmp_name'][$key], $destination)) {
 					$uploaded_files[] = $destination;
 				}
 			}
@@ -89,4 +98,33 @@ function upload_file($FILES, $id = "")
 		return $uploaded_files;
 	}
 	return false;
+}
+
+function deleteFolder($folder) {
+    if (!is_dir($folder)) {
+        return false;
+    }
+
+    $files = array_diff(scandir($folder), array('.', '..'));
+
+    foreach ($files as $file) {
+        $filePath = $folder . DIRECTORY_SEPARATOR . $file;
+        if (is_dir($filePath)) {
+            deleteFolder($filePath); // Recursively delete subdirectories
+        } else {
+            unlink($filePath); // Delete file
+        }
+    }
+
+    return rmdir($folder); // Now the folder is empty, so remove it
+}
+
+function isFolderEmpty($folderPath) {
+    if (!is_dir($folderPath)) {
+        return false; // Folder doesn't exist
+    }
+    
+    $files = array_diff(scandir($folderPath), ['.', '..']); // Remove "." and ".."
+    
+    return empty($files); // Returns true if empty, false otherwise
 }
