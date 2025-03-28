@@ -109,7 +109,7 @@ class Assignments extends Controller
         $assignment = new Assignment();
 
         $_POST['submit'] = [];
-        if (count($_FILES) > 0) {
+        if (count($_FILES) > 0 && Auth::access('Student')) {
             // upload file
             if ($myfile = upload_file($_FILES, $id)) {
                 foreach ($myfile as $file) {

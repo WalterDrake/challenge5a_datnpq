@@ -47,7 +47,7 @@
   <div class="container d-flex justify-content-center align-items-center" style="height: 100vh; flex-direction: column;">
     <div class="card p-4 d-flex flex-row align-items-center shadow-lg" style="max-width: 800px; width: 100%;">
       <?php if ($row): ?>
-        <?php $image = get_images($row->avatar); ?>
+        <?php $image = get_images($row->avatar, $row->user_id); ?>
         <div class="avatar-section pr-4">
           <img id="avatar" src="<?= esc($image) ?>" alt="User Avatar" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
         </div>
@@ -87,13 +87,32 @@
       <?php endif; ?>
     </div>
 
-    <!-- Chatbox Section -->
+    <!-- Notes Section -->
     <?php if (!Auth::i_own_content($row)): ?>
       <div class="chatbox">
-        <h5>Note for <?= esc($row->fullname) ?></h5>
-        <div class="chat-messages" id="chatMessages"></div>
+        <h5>Notes for <?= esc($row->fullname) ?></h5>
+        <div class="chat-messages" id="chatMessages">
+          <?php if (!empty($notes)): ?>
+            <?php
+            $note_id = $notes->note_id; // Store the note_id for all messages
+            $note_messages = json_decode($notes->note);
+            ?>
+            <input type="hidden" id="note_id" value="<?= esc($note_id) ?>"> <!-- Hidden note_id -->
+            <?php foreach ($note_messages as $note_message): ?>
+              <div class='alert alert-secondary mt-2' data-id="<?= esc($note_id) ?>">
+                <?= esc($note_message) ?>
+                <button class='btn btn-sm btn-warning edit-note'>Edit</button>
+                <button class='btn btn-sm btn-danger delete-note'>Delete</button>
+              </div>
+            <?php endforeach; ?>
+            <input type="hidden" id="note_id" value="<?= esc($note_id) ?>"> <!-- Hidden note_id -->
+          <?php else: ?>
+            <input type="hidden" id="note_id" value=""> <!-- No existing note -->
+          <?php endif; ?>
+        </div>
         <div class="input-group">
           <input type="text" class="form-control" id="chatInput" placeholder="Type a note...">
+          <input type="hidden" id="receiver_id" value="<?= esc($row->user_id) ?>">
           <div class="input-group-append">
             <button class="btn btn-primary" id="sendMessage">Send</button>
           </div>
@@ -106,26 +125,71 @@
     document.getElementById("sendMessage").addEventListener("click", function() {
       let input = document.getElementById("chatInput");
       let note = input.value.trim();
+      let receiver_id = document.getElementById("receiver_id").value;
+      let note_id = document.getElementById("note_id").value; // Get the note_id
+
       if (note !== "") {
-        let chatBox = document.getElementById("chatMessages");
-        let newNote = document.createElement("div");
-        newNote.classList.add("alert", "alert-secondary", "mt-2");
-        newNote.innerHTML = `${note} <button class='btn btn-sm btn-warning edit-note'>Edit</button> <button class='btn btn-sm btn-danger delete-note'>Delete</button>`;
-        chatBox.appendChild(newNote);
-        input.value = "";
-        chatBox.scrollTop = chatBox.scrollHeight;
+        let bodyData = `note=${encodeURIComponent(note)}`;
+        if (note_id) {
+          bodyData += `&note_id=${note_id}`; // Update existing note
+        } else {
+          bodyData += `&receiver_id=${receiver_id}&sender_id=<?= Auth::getUser_id() ?>`; // New note
+        }
+        fetch("<?= ROOT ?>/profile/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: bodyData
+          })
+          .then(response => location.reload());
       }
     });
 
     document.getElementById("chatMessages").addEventListener("click", function(event) {
       if (event.target.classList.contains("delete-note")) {
-        event.target.parentElement.remove();
+        let noteDiv = event.target.parentElement;
+        let noteId = noteDiv.getAttribute("data-id"); // ID of the note entry
+        let noteText = noteDiv.firstChild.textContent.trim(); // Specific note content
+
+        fetch("<?= ROOT ?>/profile/deleteNote/" + noteId, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `note=${encodeURIComponent(noteText)}`
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              noteDiv.remove();
+            } else {
+              alert("Error deleting note");
+            }
+          })
+          .catch(error => console.error("Error:", error));
       } else if (event.target.classList.contains("edit-note")) {
         let noteDiv = event.target.parentElement;
         let text = noteDiv.firstChild.textContent.trim();
         let newText = prompt("Edit your note:", text);
+
         if (newText !== null) {
-          noteDiv.firstChild.textContent = newText + " ";
+          let noteId = noteDiv.getAttribute("data-id");
+
+          fetch("<?= ROOT ?>/profile/editNote/" + noteId, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              body: `old_note=${encodeURIComponent(text)}&new_note=${encodeURIComponent(newText)}`
+            }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                noteDiv.firstChild.textContent = newText + " ";
+              } else {
+                alert("Error updating note");
+              }
+            })
+            .catch(error => console.error("Error:", error));
         }
       }
     });

@@ -26,7 +26,7 @@
             <?php endif; ?>
         </ul>
 
-        <h5>Your Submission:</h5>
+        <h5>Your Submission: (Only student)</h5>
         <?php
         $files = json_decode($row->submit, true); // Decode JSON to array
         ?>

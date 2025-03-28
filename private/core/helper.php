@@ -18,9 +18,8 @@ function esc($var)
 }
 
 
-function get_images($image)
+function get_images($image, $id = "")
 {
-	$id = Auth::getUser_id();
 	$imagePath = dirname(__DIR__, 2) . "/public/assets/uploads/" . $id . "/avatar/" . $image;
 	if (!file_exists($imagePath)) {
 		$image = ASSETS . "/dinosaur.png";
