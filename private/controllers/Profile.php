@@ -109,7 +109,6 @@ class Profile extends Controller
 
         $errors = array();
 
-        var_dump($_POST);
         $note = new Note();
         $user = new User();
 
@@ -131,6 +130,8 @@ class Profile extends Controller
                     unset($_POST['receiver_id']);
                     $_POST['note'] = json_encode([$_POST['note']]);
                     $note->insert($_POST);
+                    echo json_encode(["success" => true]);
+                    exit;
                 } else {
                     // if note_id is set, it means we are updating an existing note
                     $myrow = $note->first('note_id', $_POST['note_id']);
@@ -157,17 +158,16 @@ class Profile extends Controller
 
                         // Update the database
                         $note->update($myrow->id, $_POST);
+                        echo json_encode(["success" => true]);
+                        exit;
                     }
                 }
             } else {
                 $errors = $note->errors;
             }
         }
-        $id = Auth::getUser_id();
-        $row = $user->first('user_id', $id);
-        $data['row'] = $row;
-        $data['errors'] = $errors;
-        $this->view('profile', $data);
+        echo json_encode(["success" => false, "errors" => $errors]);
+        exit;
     }
 
     function deleteNote($note_id = '')

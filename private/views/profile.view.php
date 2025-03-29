@@ -141,8 +141,17 @@
               "Content-Type": "application/x-www-form-urlencoded"
             },
             body: bodyData
+          }).then(response => response.json()) // Parse response as JSON
+          .then(data => {
+            if (data.success) {
+              location.reload(true); // Reload if success
+            } else {
+              alert("Error deleting note"); // Show errors without reloading
+            }
           })
-          .then(response => location.reload());
+          .catch(error => {
+            console.error("Error:", error);
+          });
       }
     });
 
@@ -162,6 +171,7 @@
           .then(data => {
             if (data.success) {
               noteDiv.remove();
+              location.reload(true);
             } else {
               alert("Error deleting note");
             }
@@ -184,12 +194,13 @@
             }).then(response => response.json())
             .then(data => {
               if (data.success) {
-                noteDiv.firstChild.textContent = newText + " ";
+                location.reload(true); // Reload only on success
               } else {
-                alert("Error updating note");
+                console.error("Error:", data.errors);
+                alert("Error: " + (data.errors ? data.errors.join("\n") : "Unknown error"));
               }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => console.error("Fetch error:", error));
         }
       }
     });
