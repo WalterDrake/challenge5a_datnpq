@@ -54,7 +54,7 @@
     <?php if (Auth::getRole() == 'Teacher'): ?>
       <div class="form-group">
         <label>Uploaded By</label>
-        <input type="text" class="form-control" value="<?= esc(Auth::getUsername()) ?>" disabled>
+        <input type="text" class="form-control" value="<?= esc(Auth::getUsername()) ?>" name='author' readonly>
       </div>
     <?php elseif (Auth::getRole() == 'Administrator'): ?>
       <div class="form-group">
